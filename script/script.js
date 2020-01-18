@@ -8,6 +8,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const cart = document.querySelector(".cart");
   const category = document.querySelector(".category");
 
+  //спинер
+  const loading = () => {
+    goodsWrapper.innerHTML = `<div id="spinner"><div class="spinner-loading"><div><div><div></div>
+    </div><div><div></div></div><div><div></div></div><div><div></div></div></div></div></div>`;
+  };
+
   //создаём функцию создания карточки товаров
   const createCardGoods = (id, title, price, img) => {
     //создаём элемент <div> для карточки товара
@@ -71,6 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const getGoods = (handler, filter) => {
+    loading();
     fetch("./db/db.json")
       .then(response => response.json())
       .then(filter)
