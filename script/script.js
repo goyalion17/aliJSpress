@@ -71,9 +71,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const renderCard = goods => {
     goodsWrapper.textContent = "";
-    goods.forEach(({ id, title, price, imgMin }) => {
-      goodsWrapper.append(createCardGoods(id, title, price, imgMin));
-    });
+
+    //проверяем наличие товара и выводим его
+    if (goods.length) {
+      goods.forEach(({ id, title, price, imgMin }) => {
+        goodsWrapper.append(createCardGoods(id, title, price, imgMin));
+      });
+    } else {
+      goodsWrapper.textContent =
+        "❌ Извините, мы не нашли товаров по вашему запросу!";
+    }
   };
 
   const getGoods = (handler, filter) => {
@@ -101,11 +108,33 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  const searchGoods = event => {
+    event.preventDefault();
+
+    const input = event.target.elements.searchGoods;
+
+    const inputValue = input.value.trim();
+
+    if (inputValue !== "") {
+      const searchString = new RegExp(inputValue, "i");
+      getGoods(renderCard, goods =>
+        goods.filter(item => searchString.test(item.title))
+      );
+    } else {
+      search.classList.add("error");
+      setTimeout(() => {
+        search.classList.remove("error");
+      }, 2000);
+    }
+
+    input.value = "";
+  };
+
   //подвешиваем слушатель событий для кнопки корзины, чтобы при клике срабатывала функция openCart(выше: которая открывает модальное окно с содержимым корзины)
   cartBtn.addEventListener("click", openCart);
-
   cart.addEventListener("click", closeCart);
   category.addEventListener("click", choiceCategory);
+  search.addEventListener("submit", searchGoods);
 
   getGoods(renderCard, randomSort);
 });
