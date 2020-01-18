@@ -8,6 +8,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const cart = document.querySelector(".cart");
   const category = document.querySelector(".category");
 
+  let wishlist = [];
+
   //спинер
   const loading = () => {
     goodsWrapper.innerHTML = `<div id="spinner"><div class="spinner-loading"><div><div><div></div>
@@ -28,7 +30,9 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="card">
         <div class="card-img-wrapper">
           <img class="card-img-top" src="${img}" alt="">
-          <button class="card-add-wishlist" data-goods-id='${id}'></button>
+          <button class="card-add-wishlist ${
+            wishlist.includes(id) + 1 ? "active" : ""
+          }" data-goods-id='${id}'></button>
         </div>
 
         <div class="card-body justify-content-between">
@@ -79,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     } else {
       goodsWrapper.textContent =
-        "❌ Извините, мы не нашли товаров по вашему запросу!";
+        "❌ Извините, мы не нашли товары по вашему запросу!";
     }
   };
 
@@ -116,6 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const inputValue = input.value.trim();
 
     if (inputValue !== "") {
+      //'i' - не учитывает регистр
       const searchString = new RegExp(inputValue, "i");
       getGoods(renderCard, goods =>
         goods.filter(item => searchString.test(item.title))
@@ -130,11 +135,31 @@ document.addEventListener("DOMContentLoaded", () => {
     input.value = "";
   };
 
+  const toggleWishlist = (id, elem) => {
+    if (wishlist.includes(id)) {
+      wishlist.splice(wishlist.indexOf(id), 1);
+      elem.classList.remove("active");
+    } else {
+      wishlist.push(id);
+      elem.classList.add("active");
+    }
+  };
+
+  const handlerGoods = event => {
+    event.preventDefault();
+    const target = event.target;
+
+    if (target.classList.contains("card-add-wishlist")) {
+      toggleWishlist(target.dataset.goodsId, target);
+    }
+  };
+
   //подвешиваем слушатель событий для кнопки корзины, чтобы при клике срабатывала функция openCart(выше: которая открывает модальное окно с содержимым корзины)
   cartBtn.addEventListener("click", openCart);
   cart.addEventListener("click", closeCart);
   category.addEventListener("click", choiceCategory);
   search.addEventListener("submit", searchGoods);
+  goodsWrapper.addEventListener("click", handlerGoods);
 
   getGoods(renderCard, randomSort);
 });
