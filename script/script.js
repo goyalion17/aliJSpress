@@ -278,6 +278,6 @@ document.addEventListener("DOMContentLoaded", () => {
   wishlistBtn.addEventListener("click", showWishlist);
 
   getGoods(renderCard, randomSort);
-  storageQuery("get");
-  cookieQuery("get");
+  storageQuery(true);
+  cookieQuery(true);
 });
